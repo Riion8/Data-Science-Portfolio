@@ -1,21 +1,19 @@
-Big Data Pipeline in Predictive Modeling
+# Big Data Pipeline in Predictive Modeling
 
-# Requirements
+
+
+### Requirements
 
 To use the scripts in this repository, the following software must be
 installed and running.
 
--   Hadoop
+* Hadoop
+* Hive
+* HBase
+* Nifi
+* Spark
 
--   Hive
-
--   HBase
-
--   Nifi
-
--   Spark
-
-# Contents
+### Contents
 
 Big Data Pipeline in Predictive Modeling.docx -- Overall process
 description and results.
@@ -30,9 +28,10 @@ part of the process
 
 Spark.py -- SparkPy predictive model.
 
-# Summary
+### Summary
 
 At a high level this process takes the Diamonds file and loads it to
 Hadoop using Nifi. The data in Hadoop is then loaded into a Hive table
 for future use. SparkPy uses this table to run a simple predictive model
 and outputs the results to an HBase table for storage.
+
