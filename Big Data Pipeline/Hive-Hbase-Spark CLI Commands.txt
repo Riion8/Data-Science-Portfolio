@@ -1,0 +1,48 @@
+Hive Create Table Scripts
+
+Create table diamonds (
+carat double,
+cut string,
+color string,
+clarity string,
+depth double,
+tb double,
+x double,
+y double,
+z double,
+price double)
+row format delimited
+fields terminated by ','
+stored as textfile
+tblproperties("skip.header.line.count"="1");
+
+load data inpath '/tmp/diamonds.csv' into table diamonds;
+
+
+
+Hive aggrigation test
+
+select
+avg(carat),
+count(cut),
+count(color),
+count(clarity),
+avg(depth),
+avg(x),
+avg(y),
+avg(z),
+avg(price)
+from diamonds;
+
+Hbase Table Creation
+create 'diamondmetrics', 'cf'
+
+
+
+Spark Job Start
+spark-submit \
+  --master yarn \
+  --deploy-mode client \
+  --name GradesML_to_HBase \
+  Project.py
+
