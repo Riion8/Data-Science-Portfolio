@@ -9,70 +9,49 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from xgboost import XGBClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, confusion_matrix
 
 
 
-raw_data = pandas.read_csv('synthetic_fraud_dataset.csv')
+raw_data = pandas.read_csv('loanapproval.csv')
 
 print(raw_data.head())
 
-raw_data.drop(columns=['transaction_id','user_id'],inplace=True)
+raw_data.drop(columns=['applicant_id','gender','age'],inplace=True)
 
 print(raw_data.isna().sum())
 
-#transaction_type,merchant_category,country
-# print(raw_data.transaction_type.unique())
-# print(raw_data.merchant_category.unique())
-# print(raw_data.country.unique())
+corrmatrix = raw_data.corr(numeric_only= True)
+print(corrmatrix)
 
-transaction_type_map = {
-    'ATM': 1,
-    'QR':2,
-    'Online':3,
-    'POS':4
-    }
+corrmatrix.to_csv('correlation.csv')
 
-merchant_category_map = {
-    'Travel':1,
-    'Food':2,
-    'Clothing':3,
-    'Grocery':4,
-    'Electronics':5
-    }
-
-country_map = {
-    'TR':1,
-    'US':2,
-    'FR':3,
-    'DE':4,
-    'UK':5,
-    'NG':6
-    }
-
-raw_data['transaction_type'].replace(transaction_type_map,inplace=True)
-raw_data['merchant_category'].replace(merchant_category_map,inplace=True)
-raw_data['country'].replace(country_map,inplace=True)
+cleaneddata = pandas.get_dummies(data=raw_data,columns= ['marital_status','employment_status'])
 
 
-
-
-
-# ['ATM' 'QR' 'Online' 'POS']
-# ['Travel' 'Food' 'Clothing' 'Grocery' 'Electronics']
-# ['TR' 'US' 'FR' 'DE' 'UK' 'NG']
-
-#raw_data.corr().to_csv('feature_corr.csv')
-
-# drop highly correlated columns
-raw_data.drop(columns=['device_risk_score','ip_risk_score'],inplace=True)
-
-features = raw_data.drop(columns=['is_fraud'])
-target = raw_data.is_fraud
+features = cleaneddata.drop(columns=['loan_approved'])
+target = cleaneddata.loan_approved
 
 X_train, X_test, y_train, y_test = train_test_split(features, target, test_size=0.33, random_state=42)
-#bu
 
+# Logistic Regression
+lr = LogisticRegression(max_iter=3000)
+lr = lr.fit(X_train, y_train)
+
+lrpred = lr.predict(X_test)
+
+accuracy = accuracy_score(y_test, lrpred)
+precision = precision_score(y_test, lrpred,average='weighted')
+recall = recall_score(y_test, lrpred,average='weighted')
+f1 = f1_score(y_test, lrpred,average='weighted')
+cfmatrix = confusion_matrix(y_test, lrpred)
+
+print(f"Accuracy: {accuracy}")
+print(f"Precision: {precision}")
+print(f"Recall: {recall}")
+print(f"F1-score: {f1}")
+print(cfmatrix)
 
 
 # Random Forest
@@ -129,3 +108,4 @@ print(f"Precision: {precision}")
 print(f"Recall: {recall}")
 print(f"F1-score: {f1}")
 print(cfmatrix)
+
